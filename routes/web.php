@@ -38,3 +38,44 @@ Route::get('dogs-pagi-qb', function (){
 });
 
 //--Sorting and Filtering--//
+    //--Sorting--//
+    Route::get('dogs-sort-si', function (Request $request) {
+
+        $sortColumn = $request->input('sort','name');
+        return Dog::orderBy($sortColumn)->paginate(7);
+    });
+    //--With Directions Single Column--//
+    Route::get('dogs-sort-si-dir', function (Request $request) {
+
+        $sortColumn = $request->input('sort', 'name');
+
+        $sortDirection = str_contains($sortColumn, '-') ? 'desc' : 'asc';
+        $sortColumn = ltrim($sortColumn,'-');
+        return Dog::orderBy($sortColumn,$sortDirection)->paginate(10);
+    });
+    //--With Directions Multiple Columns--//
+    Route::get('dogs-sort-mul-dir', function (Request $request) {
+
+
+        $sortColumns = $request->input('sort') ? explode(',' , $request->input('sort','')) : null;
+        //$sortColumns = (count($sortColumns) == 0) ? "false":$sortColumns;
+
+        //dd($sortColumns);
+        $query= Dog::query();
+        //use when helper function
+
+        $query->when($sortColumns, function () use($sortColumns, $query){
+
+            foreach ($sortColumns as $sortColumn) {
+                $sortDirection = str_contains($sortColumn, '-') ? 'desc' : 'asc';
+                $sortColumn = ltrim($sortColumn, '-');
+                $query->orderBy($sortColumn, $sortDirection);
+            }
+
+        });
+        //dd($query);
+        return $query->paginate(20);
+
+    });
+    //--Filtering--//
+
