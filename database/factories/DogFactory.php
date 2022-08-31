@@ -17,7 +17,9 @@ class DogFactory extends Factory
     public function definition()
     {
         return [
-            'name' => fake()->name()
+            'name' => fake()->name(),
+            'breed' => fake()->name('animal'),
+            'weight' => fake()->unique()->numberBetween(-100, 100)
         ];
     }
 }
